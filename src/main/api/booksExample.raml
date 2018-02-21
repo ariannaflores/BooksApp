@@ -1,0 +1,155 @@
+#%RAML 1.0
+---
+title: Books Example
+version: 1.0
+baseUri: http://localhost:8081/booksExample
+documentation:
+  - title: About Books Api
+    content: |
+      Books API allows you to realize operations over a list of books such as add, get all, get by title, update and delete books and its information.
+
+
+/Library:
+  displayName: Library
+    #description: |
+    # A collection of books in the list.
+  get:
+   description: Retrieves all the available books and its information.
+   headers:
+     User:
+       description: Used for tracking purposes, must contain the name of the user making the request.
+       example: userName
+       required: true
+   queryParameters:
+     title:
+       displayName: Title
+       type: string
+       description: The title of the book.
+       example: The Hobbit
+       required: false
+   responses:
+     200:
+       body:
+         application/json:
+           "type": "array"
+           "items": 
+             "additionalProperties": false
+             "type": "object"
+             "properties": 
+               "author":
+                 "type": "string"
+               "id":
+                 "type": "integer"
+               "pages":
+                  "type": "integer"
+               "title":
+                  "type": "string"
+  
+           example: !              
+               [ 
+                  {
+                    "title": "Trial trial",
+                    "author":"Franz Kafka",
+                    "pages": 275,
+                    "id":1
+                  },
+                  {
+                     "title": "The Hobbit",
+                     "author": "J. R. R. Tolkien",
+                      "pages": 497,  
+                      "id":2
+                  }
+               ]
+                
+  post:
+    description: Add a book to list.
+    headers:
+      User:
+       description:  Used for tracking purposes, must contain the name of the user making the request.
+       example: userName
+       required: true
+    body:
+      application/json:
+        example: !              
+           {
+               "title": "Trial trial",
+               "author":"Franz Kafka",
+               "pages": 275,
+               "id":1
+              
+            }
+        type: "object"
+        properties:
+          "author":
+            "type": "string"
+          "id":
+            "type": "integer"
+          "pages":
+            "type": "integer"
+          "title":
+            "type": "string"
+
+    responses:
+      201:
+        description: |
+          The book has been created.
+      409:
+        description: |
+          A book with the ID already exists.
+
+/{bookId}:
+  displayName: Book
+    #description: |
+    #  Allows you to delete a book from the list or modify its information.
+  uriParameters:
+    bookId:
+      description: |
+          Integer unique ID.
+      type: integer
+      example: 1
+
+  put:
+    description: Updates book information.
+    headers:
+      User:
+       description: Used for tracking purposes, must contain the name of the user making the request.
+       example: userName
+       required: true
+    body:
+     application/json:
+        example: !              
+           {
+              "title": "The Hobbit",
+              "author": "J. R. R. Tolkien",
+              "pages": 497  
+            }
+        type: "object" 
+        properties:
+          "author":
+            "type": "string"
+          "pages":
+            "type": "integer"
+          "title":
+            "type": "string"      
+      
+    responses:
+      200:
+        description: |
+          Book updated.
+      404:
+        description: |
+          Unable to find a book with the desired ID.
+  delete:
+    description: Removes a book from the catalog.
+    headers:
+      User:
+       description: Used for tracking purposes, must contain the name of the user making the request.
+       example: userName
+       required: true
+    responses:
+      204:
+        description: |
+          Book updated.
+      404:
+        description: |
+          Unable to find a book with the desired ID.
